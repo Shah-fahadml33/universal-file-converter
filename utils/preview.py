@@ -73,7 +73,9 @@ def preview_pptx(pptx_path: str):
 
     st.write(f"Slides : {len(prs.slides)}")
 
-    for index, slide in enumerate(prs.slides[:3], start=1):
+    for index, slide in enumerate(prs.slides, start=1):
+        if index > 3:
+            break
 
         st.markdown(f"### Slide {index}")
 

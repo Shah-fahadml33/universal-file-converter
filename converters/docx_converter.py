@@ -2,7 +2,7 @@ from pathlib import Path
 import platform
 
 from docx import Document
-from docx2pdf import convert
+
 
 
 def docx_to_pdf(docx_path: str, output_path: str):
@@ -17,6 +17,8 @@ def docx_to_pdf(docx_path: str, output_path: str):
         raise RuntimeError(
             "DOCX to PDF using docx2pdf is only supported on Windows and macOS."
         )
+
+    from docx2pdf import convert
 
     convert(docx_path, output_path)
 
