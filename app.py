@@ -7,6 +7,10 @@ from converters.pdf_converter import (
     pdf_to_docx,
     pdf_to_pptx,
     pdf_to_images,
+    merge_pdfs,
+    split_pdf,
+    rotate_pdf,
+    compress_pdf,
 )
 
 from converters.docx_converter import (
@@ -125,24 +129,67 @@ if uploaded is not None:
 
                         image_folder = output_folder / "images"
 
-                        pdf_to_images(
+                        images = pdf_to_images(
                             input_path,
                             str(image_folder),
                         )
 
-                        st.success("Images created.")
+                        import zipfile
 
-                        for image in image_folder.iterdir():
+                        zip_path = output_folder / "images.zip"
 
-                            with open(image, "rb") as f:
-                                st.download_button(
-                                    image.name,
-                                    f,
-                                    file_name=image.name,
-                                )
+                        with zipfile.ZipFile(zip_path, "w") as zipf:
+                            for image in images:
+                                zipf.write(image, Path(image).name)
+
+                        output_file = zip_path
+
+                    elif option == "SPLIT":
+
+                        split_folder = output_folder / "split"
+
+                        pdfs = split_pdf(
+                            input_path,
+                            str(split_folder),
+                        )
+
+                        import zipfile
+
+                        zip_path = output_folder / "split_pdf.zip"
+
+                        with zipfile.ZipFile(zip_path, "w") as zipf:
+                            for pdf in pdfs:
+                                zipf.write(pdf, Path(pdf).name)
+
+                        output_file = zip_path
+
+                    elif option == "ROTATE":
+
+                        output_file = output_folder / "rotated.pdf"
+
+                        rotate_pdf(
+                            input_path,
+                            str(output_file),
+                            rotation=90,
+                        )
+
+                    elif option == "COMPRESS":
+
+                        output_file = output_folder / "compressed.pdf"
+
+                        compress_pdf(
+                            input_path,
+                            str(output_file),
+                        )
+
+                    elif option == "MERGE":
+
+                        st.info(
+                            "Merge requires multiple PDF uploads. "
+                            "Current uploader accepts only one file."
+                        )
 
                         st.stop()
-
                 # ---------------- DOCX ----------------
 
                 elif extension == ".docx":
